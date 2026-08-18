@@ -22,76 +22,6 @@ export type AssessmentMeta = {
   summary: string;
 };
 
-const SCALE_QUESTIONS: Question[] = [
-  {
-    id: "business",
-    label: "What does the business do, in one sentence?",
-    hint: "The version you'd say out loud, not the one on the website.",
-    placeholder: "We clean offices for…",
-    required: true,
-    rows: 2,
-    maxLength: 280,
-  },
-  {
-    id: "working",
-    label: "What's working well enough to double down on?",
-    hint: "Growth usually comes from feeding what already works, not adding something new.",
-    placeholder: "Referrals from existing clients bring in…",
-    required: true,
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "bottleneck",
-    label: "Where does growth actually break?",
-    hint: "If twice as many customers showed up tomorrow, what snaps first?",
-    placeholder: "We'd run out of…",
-    required: true,
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "shape",
-    label: "What does a typical month look like?",
-    hint: "Revenue, customers, jobs, capacity — whatever numbers you actually track.",
-    placeholder: "Around 30 jobs, roughly…",
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "manual",
-    label: "What are you still doing by hand that should be a system?",
-    hint: "The tasks only you can do are the ceiling on how big this gets.",
-    placeholder: "I personally quote every…",
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "team",
-    label: "Who else is involved, and what do they own?",
-    hint: "Staff, contractors, a spouse who does the books at midnight — all of it counts.",
-    placeholder: "Two part-time cleaners and…",
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "target",
-    label: "What would the next level actually look like?",
-    hint: "Put a number on it. \"Bigger\" isn't a target you can aim at.",
-    placeholder: "Ten thousand a month with…",
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "one_thing",
-    label: "If you could only fix one thing this quarter, what would it be?",
-    hint: "The honest answer here is usually the whole plan.",
-    placeholder: "Getting off the tools so I can…",
-    rows: 3,
-    maxLength: 1000,
-  },
-];
-
 const FIX_QUESTIONS: Question[] = [
   {
     id: "business",
@@ -175,10 +105,10 @@ export const ASSESSMENTS: Record<AssessmentSlug, AssessmentMeta> = {
   scale: {
     slug: "scale",
     name: "Your Business Is Ready for Its Next Level",
-    title: "The Next Level",
+    title: "Your Business Is Ready for Its Next Level",
     intro:
-      "Growth isn't just more customers — it's better systems and a clearer sense of what to feed. Eight questions to find where your next level is actually blocked.",
-    summary: "8 questions · about 5 minutes",
+      "Growing a business isn't just about getting more customers. It's about building the right systems, improving what's already working, and knowing where to focus next.",
+    summary: "20 questions · about 4 minutes",
   },
   fix: {
     slug: "fix",
@@ -191,7 +121,7 @@ export const ASSESSMENTS: Record<AssessmentSlug, AssessmentMeta> = {
 };
 
 /** The two assessments still served by the simple single-scroll form. */
-export const FORM_SLUGS = ["scale", "fix"] as const;
+export const FORM_SLUGS = ["fix"] as const;
 
 export type FormSlug = (typeof FORM_SLUGS)[number];
 
@@ -201,11 +131,6 @@ export type FormAssessment = AssessmentMeta & {
 };
 
 export const FORM_ASSESSMENTS: Record<FormSlug, FormAssessment> = {
-  scale: {
-    ...ASSESSMENTS.scale,
-    cta: "Done — show me the picture",
-    questions: SCALE_QUESTIONS,
-  },
   fix: {
     ...ASSESSMENTS.fix,
     cta: "Done — help me see it",

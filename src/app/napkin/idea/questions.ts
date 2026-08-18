@@ -6,51 +6,11 @@
  * and name/email moved to the end so the assessment opens on the idea itself.
  */
 
-export type Field =
-  | {
-      kind: "text";
-      id: string;
-      label: string;
-      placeholder: string;
-      inputType?: "text" | "email";
-      /** Sits in a two-up row on wider screens. */
-      half?: boolean;
-      optional?: boolean;
-      maxLength?: number;
-      /** Only shown when another field currently holds this value. */
-      showWhen?: { field: string; equals: string };
-    }
-  | {
-      kind: "textarea";
-      id: string;
-      label: string;
-      hint?: string;
-      placeholder: string;
-      optional?: boolean;
-      maxLength?: number;
-    }
-  | {
-      kind: "single";
-      id: string;
-      label: string;
-      options: string[];
-      optional?: boolean;
-    }
-  | {
-      kind: "multi";
-      id: string;
-      label: string;
-      options: string[];
-      optional?: boolean;
-    };
-
-export type Section = {
-  /** Shown in the step rail. */
-  badge: string;
-  title: string;
-  blurb?: string;
-  fields: Field[];
-};
+import {
+  buildFieldShapes,
+  countQuestions,
+  type Section,
+} from "../wizard/types";
 
 export const SECTIONS: Section[] = [
   {
@@ -270,39 +230,5 @@ export const SECTIONS: Section[] = [
   },
 ];
 
-export const QUESTION_COUNT = SECTIONS.reduce(
-  (total, section) => total + section.fields.length,
-  0,
-);
-
-/** Flat lookup of every field id and its shape, for server-side validation. */
-export type FieldShape =
-  | { type: "string"; maxLength: number }
-  | { type: "option"; options: string[] }
-  | { type: "options"; options: string[] };
-
-export const FIELD_SHAPES: Record<string, FieldShape> = (() => {
-  const shapes: Record<string, FieldShape> = {};
-
-  for (const section of SECTIONS) {
-    for (const field of section.fields) {
-      switch (field.kind) {
-        case "text":
-        case "textarea":
-          shapes[field.id] = {
-            type: "string",
-            maxLength: field.maxLength ?? 2000,
-          };
-          break;
-        case "single":
-          shapes[field.id] = { type: "option", options: field.options };
-          break;
-        case "multi":
-          shapes[field.id] = { type: "options", options: field.options };
-          break;
-      }
-    }
-  }
-
-  return shapes;
-})();
+export const QUESTION_COUNT = countQuestions(SECTIONS);
+export const FIELD_SHAPES = buildFieldShapes(SECTIONS);

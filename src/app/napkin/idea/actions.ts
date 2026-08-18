@@ -1,18 +1,14 @@
 "use server";
 
+import { sanitize, type Answers } from "../wizard/types";
+import type { SubmitResult } from "../wizard/wizard";
 import { FIELD_SHAPES } from "./questions";
-
-export type Answers = Record<string, string | string[]>;
-
-export type SubmitResult =
-  | { ok: true }
-  | { ok: false; errors: Record<string, string> };
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
- * Answers arrive as a client-built object, so every key is checked against the
- * known field shapes and anything unrecognised is dropped rather than stored.
+ * Answers are assembled client-side, so every key is checked against the known
+ * field shapes and anything unrecognised is dropped rather than stored.
  */
 export async function submitIdeaAssessment(
   answers: Answers,
@@ -30,31 +26,7 @@ export async function submitIdeaAssessment(
     return { ok: false, errors };
   }
 
-  const clean: Answers = {};
-
-  for (const [id, value] of Object.entries(answers)) {
-    const shape = FIELD_SHAPES[id];
-    if (!shape) continue;
-
-    switch (shape.type) {
-      case "string":
-        if (typeof value === "string" && value.trim()) {
-          clean[id] = value.trim().slice(0, shape.maxLength);
-        }
-        break;
-      case "option":
-        if (typeof value === "string" && shape.options.includes(value)) {
-          clean[id] = value;
-        }
-        break;
-      case "options":
-        if (Array.isArray(value)) {
-          const picked = value.filter((v) => shape.options.includes(v));
-          if (picked.length) clean[id] = picked;
-        }
-        break;
-    }
-  }
+  const clean = sanitize(FIELD_SHAPES, answers);
 
   // TODO: persist to Supabase and kick off the roadmap email once wired up.
   console.log("[napkin:idea] submission", {
