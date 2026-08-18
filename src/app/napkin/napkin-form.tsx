@@ -2,30 +2,31 @@
 
 import { ViewTransition, useActionState, useState } from "react";
 import { submitNapkin } from "./actions";
-import { QUESTIONS, initialNapkinState } from "./schema";
+import { initialNapkinState, type Assessment } from "./schema";
 
 /**
  * Shared-element names must be unique across everything mounted at once, so the
  * form field and its summary counterpart are the only two users of each name.
  */
-const labelName = (id: string) => `napkin-label-${id}`;
-const answerName = (id: string) => `napkin-answer-${id}`;
+const labelName = (slug: string, id: string) => `napkin-${slug}-label-${id}`;
+const answerName = (slug: string, id: string) => `napkin-${slug}-answer-${id}`;
 
-export function NapkinForm() {
+export function NapkinForm({ assessment }: { assessment: Assessment }) {
   const [state, formAction, pending] = useActionState(
     submitNapkin,
     initialNapkinState,
   );
 
   if (state.status === "success") {
-    return <NapkinSummary answers={state.answers} />;
+    return <NapkinSummary assessment={assessment} answers={state.answers} />;
   }
 
   const hasErrors = Object.keys(state.errors).length > 0;
 
   return (
     <form action={formAction} className="flex flex-col gap-12">
-      {QUESTIONS.map((question, index) => {
+      <input type="hidden" name="assessment" value={assessment.slug} />
+      {assessment.questions.map((question, index) => {
         const error = state.errors[question.id];
         const errorId = `${question.id}-error`;
         const hintId = `${question.id}-hint`;
@@ -37,7 +38,7 @@ export function NapkinForm() {
                 {String(index + 1).padStart(2, "0")}
               </span>
               <ViewTransition
-                name={labelName(question.id)}
+                name={labelName(assessment.slug, question.id)}
                 share="text-morph"
                 exit="fade-out"
                 default="none"
@@ -58,7 +59,7 @@ export function NapkinForm() {
             </p>
 
             <ViewTransition
-              name={answerName(question.id)}
+              name={answerName(assessment.slug, question.id)}
               share="text-morph"
               exit="fade-out"
               default="none"
@@ -92,7 +93,7 @@ export function NapkinForm() {
       <div className="ml-8 flex flex-col gap-3 border-t border-black/10 pt-8 dark:border-white/10">
         {hasErrors && (
           <p aria-live="polite" className="text-sm text-red-600 dark:text-red-400">
-            A few questions still need answers.
+            {state.errors._form ?? "A few questions still need answers."}
           </p>
         )}
         <button
@@ -100,17 +101,25 @@ export function NapkinForm() {
           disabled={pending}
           className="self-start rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition hover:opacity-85 disabled:opacity-50"
         >
-          {pending ? "Reading it back…" : "Done — read it back to me"}
+          {pending ? "Reading it back…" : assessment.cta}
         </button>
       </div>
     </form>
   );
 }
 
-function NapkinSummary({ answers }: { answers: Record<string, string> }) {
+function NapkinSummary({
+  assessment,
+  answers,
+}: {
+  assessment: Assessment;
+  answers: Record<string, string>;
+}) {
   const [copied, setCopied] = useState(false);
 
-  const answered = QUESTIONS.filter((question) => answers[question.id]);
+  const answered = assessment.questions.filter(
+    (question) => answers[question.id],
+  );
 
   async function copy() {
     const text = answered
@@ -125,14 +134,14 @@ function NapkinSummary({ answers }: { answers: Record<string, string> }) {
   return (
     <div className="flex flex-col gap-10">
       <p className="text-lg text-black/60 dark:text-white/60">
-        {"Here's your napkin. Read it back tomorrow morning and see if it still holds up."}
+        {"Here's what you wrote. Read it back tomorrow morning and see if it still holds up."}
       </p>
 
       <dl className="flex flex-col gap-8">
         {answered.map((question) => (
           <div key={question.id} className="flex flex-col gap-1.5">
             <ViewTransition
-              name={labelName(question.id)}
+              name={labelName(assessment.slug, question.id)}
               share="text-morph"
               enter="fade-in"
               default="none"
@@ -143,7 +152,7 @@ function NapkinSummary({ answers }: { answers: Record<string, string> }) {
             </ViewTransition>
 
             <ViewTransition
-              name={answerName(question.id)}
+              name={answerName(assessment.slug, question.id)}
               share="text-morph"
               enter="fade-in"
               default="none"
@@ -165,7 +174,7 @@ function NapkinSummary({ answers }: { answers: Record<string, string> }) {
           {copied ? "Copied" : "Copy to clipboard"}
         </button>
         <a
-          href="/napkin"
+          href={`/napkin/${assessment.slug}`}
           className="rounded-full border border-black/15 px-6 py-3 text-sm font-medium transition hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/5"
         >
           Start another

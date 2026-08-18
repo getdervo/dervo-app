@@ -7,31 +7,28 @@ import {
   WrenchIcon,
 } from "./icons";
 
-/**
- * Only the "idea" flow exists today (/napkin). The other two carry a `path`
- * param so the choice is recorded and can branch when those flows are built.
- */
+/** Each card opens its own assessment under /napkin. */
 const PATHS = [
   {
     Icon: LightbulbIcon,
     title: "Turn Your Idea Into a Business",
     body: "You have the idea. Now let's figure out how to turn it into something real. Tell Dervo about your idea, your goals, and what you have to work with. We'll help you identify what you need, what to focus on first, and create a clear roadmap to get started.",
     cta: "Start assessment",
-    href: "/napkin",
+    href: "/napkin/idea",
   },
   {
     Icon: TrendingUpIcon,
     title: "Your Business Is Ready for Its Next Level",
     body: "Growing a business isn't just about getting more customers. It's about building the right systems, improving what's already working, and knowing where to focus next. Tell us about your business, and Dervo will identify your biggest opportunities and create a roadmap for growth.",
     cta: "Scale assessment",
-    href: "/napkin?path=scale",
+    href: "/napkin/scale",
   },
   {
     Icon: WrenchIcon,
     title: "I'm Stuck. Help Me Figure Out Why.",
     body: "Your business isn't where you want it to be, but you're not exactly sure what needs to change. Tell us what's happening, and Dervo will help identify your biggest business bottleneck and recommend your next steps.",
     cta: "Fix my business",
-    href: "/napkin?path=fix",
+    href: "/napkin/fix",
   },
 ];
 
