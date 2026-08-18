@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { NapkinForm } from "./napkin-form";
-import { ASSESSMENTS, type AssessmentSlug } from "./schema";
+import { FORM_ASSESSMENTS, type FormSlug } from "./schema";
 
 /** Shared shell for the three assessment routes under /napkin. */
-export function AssessmentPage({ slug }: { slug: AssessmentSlug }) {
-  const assessment = ASSESSMENTS[slug];
+export function AssessmentPage({ slug }: { slug: FormSlug }) {
+  const assessment = FORM_ASSESSMENTS[slug];
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-16 sm:py-24">

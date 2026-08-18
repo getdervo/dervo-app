@@ -12,85 +12,15 @@ export const ASSESSMENT_SLUGS = ["idea", "scale", "fix"] as const;
 
 export type AssessmentSlug = (typeof ASSESSMENT_SLUGS)[number];
 
-export type Assessment = {
+export type AssessmentMeta = {
   slug: AssessmentSlug;
   /** Card title on the landing page. */
   name: string;
   title: string;
   intro: string;
-  cta: string;
-  questions: Question[];
+  /** Shown on the chooser, e.g. "8 questions · about 5 minutes". */
+  summary: string;
 };
-
-const IDEA_QUESTIONS: Question[] = [
-  {
-    id: "idea",
-    label: "What's the idea, in one sentence?",
-    hint: "If you can't fit it on a napkin, it isn't ready yet.",
-    placeholder: "A marketplace that lets…",
-    required: true,
-    rows: 2,
-    maxLength: 280,
-  },
-  {
-    id: "problem",
-    label: "What problem does it solve?",
-    hint: "Describe the pain, not the product.",
-    placeholder: "Right now, people have to…",
-    required: true,
-    rows: 4,
-    maxLength: 1000,
-  },
-  {
-    id: "who",
-    label: "Who hurts most without it?",
-    hint: "Be specific. \"Everyone\" is not an audience.",
-    placeholder: "Freelance designers who bill hourly and…",
-    required: true,
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "today",
-    label: "How do they solve it today?",
-    hint: "Every problem already has a workaround — spreadsheets, duct tape, sheer willpower.",
-    placeholder: "Most of them cobble together…",
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "why_you",
-    label: "Why you?",
-    hint: "What do you know, or have, that most people attempting this wouldn't?",
-    placeholder: "I spent six years…",
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "money",
-    label: "How does it make money?",
-    hint: "A guess is fine. A blank is not.",
-    placeholder: "Subscription at roughly…",
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "assumption",
-    label: "What has to be true for this to work?",
-    hint: "Name the single biggest assumption you're making.",
-    placeholder: "This only works if…",
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "walk_away",
-    label: "What would make you walk away?",
-    hint: "Deciding this now, while it's cheap, is the whole point.",
-    placeholder: "If after three months…",
-    rows: 3,
-    maxLength: 1000,
-  },
-];
 
 const SCALE_QUESTIONS: Question[] = [
   {
@@ -232,15 +162,15 @@ const FIX_QUESTIONS: Question[] = [
   },
 ];
 
-export const ASSESSMENTS: Record<AssessmentSlug, Assessment> = {
+/** Chooser metadata for every assessment, including the wizard-driven idea one. */
+export const ASSESSMENTS: Record<AssessmentSlug, AssessmentMeta> = {
   idea: {
     slug: "idea",
     name: "Turn Your Idea Into a Business",
-    title: "The Napkin",
+    title: "Start My Assessment",
     intro:
-      "Every business starts as a scribble on the back of something. Eight questions to get yours out of your head and onto paper — where you can actually look at it.",
-    cta: "Done — read it back to me",
-    questions: IDEA_QUESTIONS,
+      "Not sure if your idea is ready? That's okay. You don't need to have everything figured out. That's what Dervo is here for.",
+    summary: "7 sections · about 5 minutes",
   },
   scale: {
     slug: "scale",
@@ -248,8 +178,7 @@ export const ASSESSMENTS: Record<AssessmentSlug, Assessment> = {
     title: "The Next Level",
     intro:
       "Growth isn't just more customers — it's better systems and a clearer sense of what to feed. Eight questions to find where your next level is actually blocked.",
-    cta: "Done — show me the picture",
-    questions: SCALE_QUESTIONS,
+    summary: "8 questions · about 5 minutes",
   },
   fix: {
     slug: "fix",
@@ -257,10 +186,36 @@ export const ASSESSMENTS: Record<AssessmentSlug, Assessment> = {
     title: "The Sticking Point",
     intro:
       "Something's off and it's hard to name from the inside. Eight questions to get it out where you can see it, and narrow down what's really in the way.",
+    summary: "8 questions · about 5 minutes",
+  },
+};
+
+/** The two assessments still served by the simple single-scroll form. */
+export const FORM_SLUGS = ["scale", "fix"] as const;
+
+export type FormSlug = (typeof FORM_SLUGS)[number];
+
+export type FormAssessment = AssessmentMeta & {
+  cta: string;
+  questions: Question[];
+};
+
+export const FORM_ASSESSMENTS: Record<FormSlug, FormAssessment> = {
+  scale: {
+    ...ASSESSMENTS.scale,
+    cta: "Done — show me the picture",
+    questions: SCALE_QUESTIONS,
+  },
+  fix: {
+    ...ASSESSMENTS.fix,
     cta: "Done — help me see it",
     questions: FIX_QUESTIONS,
   },
 };
+
+export function isFormSlug(value: string): value is FormSlug {
+  return (FORM_SLUGS as readonly string[]).includes(value);
+}
 
 export function isAssessmentSlug(value: string): value is AssessmentSlug {
   return (ASSESSMENT_SLUGS as readonly string[]).includes(value);

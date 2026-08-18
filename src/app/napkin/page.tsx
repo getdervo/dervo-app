@@ -43,7 +43,7 @@ export default function NapkinIndexPage() {
                   {assessment.intro}
                 </span>
                 <span className="mt-1 text-sm font-medium text-black/40 dark:text-white/40">
-                  {assessment.questions.length} questions →
+                  {assessment.summary} →
                 </span>
               </Link>
             </li>

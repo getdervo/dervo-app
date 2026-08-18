@@ -2,7 +2,7 @@
 
 import { ViewTransition, useActionState, useState } from "react";
 import { submitNapkin } from "./actions";
-import { initialNapkinState, type Assessment } from "./schema";
+import { initialNapkinState, type FormAssessment } from "./schema";
 
 /**
  * Shared-element names must be unique across everything mounted at once, so the
@@ -11,7 +11,7 @@ import { initialNapkinState, type Assessment } from "./schema";
 const labelName = (slug: string, id: string) => `napkin-${slug}-label-${id}`;
 const answerName = (slug: string, id: string) => `napkin-${slug}-answer-${id}`;
 
-export function NapkinForm({ assessment }: { assessment: Assessment }) {
+export function NapkinForm({ assessment }: { assessment: FormAssessment }) {
   const [state, formAction, pending] = useActionState(
     submitNapkin,
     initialNapkinState,
@@ -112,7 +112,7 @@ function NapkinSummary({
   assessment,
   answers,
 }: {
-  assessment: Assessment;
+  assessment: FormAssessment;
   answers: Record<string, string>;
 }) {
   const [copied, setCopied] = useState(false);

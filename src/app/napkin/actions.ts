@@ -1,8 +1,8 @@
 "use server";
 
 import {
-  ASSESSMENTS,
-  isAssessmentSlug,
+  FORM_ASSESSMENTS,
+  isFormSlug,
   validate,
   type NapkinState,
 } from "./schema";
@@ -15,7 +15,7 @@ export async function submitNapkin(
   // until it has been checked against the known set.
   const slug = String(formData.get("assessment") ?? "");
 
-  if (!isAssessmentSlug(slug)) {
+  if (!isFormSlug(slug)) {
     return {
       status: "error",
       errors: { _form: "Unknown assessment. Try starting again." },
@@ -23,7 +23,7 @@ export async function submitNapkin(
     };
   }
 
-  const { questions } = ASSESSMENTS[slug];
+  const { questions } = FORM_ASSESSMENTS[slug];
   const answers: Record<string, string> = {};
 
   for (const question of questions) {

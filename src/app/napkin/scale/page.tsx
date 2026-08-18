@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { AssessmentPage } from "../assessment-page";
-import { ASSESSMENTS } from "../schema";
+import { FORM_ASSESSMENTS } from "../schema";
 
-const assessment = ASSESSMENTS.scale;
+const assessment = FORM_ASSESSMENTS.scale;
 
 export const metadata: Metadata = {
   title: `${assessment.title} — Dervo`,
