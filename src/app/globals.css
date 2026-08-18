@@ -11,6 +11,35 @@
   --font-sans: var(--font-geist-sans);
 }
 
+/* ---------------------------------------------------------------------------
+   Dervo brand tokens — from the "Dervo Landing" design handoff.
+   Shadows use the handoff's navy tint, not the Organic DS's warm tint.
+   --------------------------------------------------------------------------- */
+@theme {
+  --color-navy: #01092d;
+  --color-azure: #032c7b;
+  --color-royal: #0464de;
+  --color-royal-dark: #0353c6;
+  --color-lime: #aee37b;
+  --color-lime-dark: #9ed168;
+  --color-frost: #f0fff4;
+
+  --color-ink: #44506a;
+  --color-muted: #5b6b85;
+  --color-list: #33405c;
+  --color-cardline: #e3e9f2;
+  --color-outline: #c9d6ea;
+  --color-connector: #b9cbe6;
+  --color-track: #e4ebf6;
+  --color-alert: #e04545;
+
+  --font-brand: var(--font-manrope), system-ui, sans-serif;
+
+  --shadow-dervo-sm: 0 1px 2px rgba(1, 9, 45, 0.1);
+  --shadow-dervo-md: 0 3px 10px rgba(1, 9, 45, 0.12);
+  --shadow-dervo-lg: 0 12px 32px rgba(1, 9, 45, 0.18);
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;

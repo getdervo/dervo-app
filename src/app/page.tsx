@@ -1,24 +1,28 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+import { Hero } from "@/components/landing/hero";
+import { HowItWorks } from "@/components/landing/how-it-works";
+import { Paths } from "@/components/landing/paths";
+import { SiteFooter } from "@/components/landing/site-footer";
+import { SiteHeader } from "@/components/landing/site-header";
+import { WhyDervo } from "@/components/landing/why-dervo";
+
+export const metadata: Metadata = {
+  title: "Dervo — Build smarter. Start Simpler",
+  description:
+    "Dervo helps service business owners start, grow, and fix their businesses with a short diagnostic and a step-by-step roadmap.",
+};
 
 export default function Home() {
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-8 p-8 text-center">
-      <div className="flex flex-col gap-4">
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-          Welcome to Dervo
-        </h1>
-        <p className="max-w-md text-lg leading-relaxed text-black/60 dark:text-white/60">
-          Got a business idea rattling around? Start by getting it out of your
-          head.
-        </p>
+    <div className="flex-1 bg-frost font-brand text-navy">
+      <div className="mx-auto max-w-[1240px] bg-white">
+        <SiteHeader />
+        <Hero />
+        <Paths />
+        <HowItWorks />
+        <WhyDervo />
+        <SiteFooter />
       </div>
-
-      <Link
-        href="/napkin"
-        className="rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition hover:opacity-85"
-      >
-        Sketch it on a napkin →
-      </Link>
-    </main>
+    </div>
   );
 }
