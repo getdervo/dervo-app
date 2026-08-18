@@ -4,6 +4,7 @@ import {
   MapIcon,
   MessageSquareIcon,
 } from "./icons";
+import { DrawLine, Reveal, StaggerGroup, StaggerItem } from "./motion-primitives";
 
 const STEPS = [
   {
@@ -38,24 +39,26 @@ export function HowItWorks() {
       id="how-it-works"
       className="mx-6 grid items-center gap-11 rounded-[28px] bg-frost px-10 py-11 sm:mx-12 lg:grid-cols-[280px_1fr]"
     >
-      <div>
+      <Reveal>
         <p className="text-[12px] font-extrabold uppercase tracking-[0.14em] text-azure">
           How it works
         </p>
         <h2 className="mt-2.5 text-[29px] font-extrabold leading-[1.25] tracking-[-0.01em] text-navy">
           Simple process. Real results.
         </h2>
-      </div>
+      </Reveal>
 
       <div className="relative">
         {/* Dashed connector sits at circle mid-height, inset 9% each side. */}
-        <div
-          aria-hidden="true"
-          className="absolute top-[26px] right-[9%] left-[9%] hidden border-t-2 border-dashed border-connector sm:block"
-        />
-        <ol className="relative grid grid-cols-1 gap-8 sm:grid-cols-4 sm:gap-[18px]">
+        <DrawLine className="absolute top-[26px] right-[9%] left-[9%] hidden border-t-2 border-dashed border-connector sm:block" />
+        <StaggerGroup
+          as="ol"
+          className="relative grid grid-cols-1 gap-8 sm:grid-cols-4 sm:gap-[18px]"
+          delayChildren={0.2}
+        >
           {STEPS.map(({ Icon, title, body, dark }) => (
-            <li
+            <StaggerItem
+              as="li"
               key={title}
               className="flex flex-col items-center gap-2.5 text-center"
             >
@@ -68,9 +71,9 @@ export function HowItWorks() {
               </div>
               <p className="text-[14px] font-bold text-navy">{title}</p>
               <p className="text-[12.5px] leading-[1.55] text-muted">{body}</p>
-            </li>
+            </StaggerItem>
           ))}
-        </ol>
+        </StaggerGroup>
       </div>
     </section>
   );

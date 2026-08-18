@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Reveal, StaggerGroup, StaggerItem } from "./motion-primitives";
 import {
   ArrowRightIcon,
   LightbulbIcon,
@@ -37,16 +38,19 @@ const PATHS = [
 export function Paths() {
   return (
     <section id="solutions" className="bg-white px-6 py-16 text-center sm:px-12">
-      <p className="text-[12px] font-extrabold uppercase tracking-[0.14em] text-royal">
-        What brings you here today?
-      </p>
-      <h2 className="mt-3 text-[27px] font-extrabold tracking-[-0.01em] text-navy sm:text-[33px]">
-        We&apos;ll point you to the right next step.
-      </h2>
+      <Reveal>
+        <p className="text-[12px] font-extrabold uppercase tracking-[0.14em] text-royal">
+          What brings you here today?
+        </p>
+        <h2 className="mt-3 text-[27px] font-extrabold tracking-[-0.01em] text-navy sm:text-[33px]">
+          We&apos;ll point you to the right next step.
+        </h2>
+      </Reveal>
 
-      <div className="mt-10 grid gap-5 md:grid-cols-3">
+      <StaggerGroup className="mt-10 grid gap-5 md:grid-cols-3" delayChildren={0.05}>
         {PATHS.map(({ Icon, title, body, cta, href }) => (
-          <article
+          <StaggerItem
+            as="article"
             key={title}
             className="flex flex-col items-center gap-3 rounded-3xl border border-cardline bg-white px-[26px] py-[30px] shadow-dervo-sm transition-shadow duration-150 hover:shadow-dervo-md"
           >
@@ -64,9 +68,9 @@ export function Paths() {
               {cta}
               <ArrowRightIcon size={14} />
             </Link>
-          </article>
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerGroup>
     </section>
   );
 }

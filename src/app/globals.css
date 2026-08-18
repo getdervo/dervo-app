@@ -119,3 +119,21 @@ body {
     animation-delay: 0s !important;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   In-page anchor scrolling.
+   Next 16 no longer overrides scroll-behavior during navigation; the
+   data-scroll-behavior="smooth" attribute on <html> restores that override, so
+   route changes stay instant while same-page anchors glide.
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Keep anchored sections off the very top edge of the viewport. */
+[id="how-it-works"],
+[id="solutions"] {
+  scroll-margin-top: 24px;
+}
