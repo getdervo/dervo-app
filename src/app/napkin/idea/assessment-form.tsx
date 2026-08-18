@@ -5,7 +5,7 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowRightIcon } from "@/components/landing/icons";
 import { submitIdeaAssessment, type Answers } from "./actions";
-import { RATING_SCALE, SECTIONS, type Field } from "./questions";
+import { SECTIONS, type Field } from "./questions";
 
 const INPUT =
   "w-full rounded-full border-[1.5px] border-outline bg-white px-5 py-[13px] text-[14.5px] text-navy outline-none placeholder:text-[#9aa8c0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-royal";
@@ -19,6 +19,8 @@ const CHIP_OFF =
   "border-outline bg-white text-list hover:border-royal hover:text-navy";
 const CHIP_ON = "border-royal bg-royal text-frost";
 
+type SetAnswer = (id: string, value: string | string[]) => void;
+
 export function AssessmentForm() {
   const [step, setStep] = useState(0);
   const [done, setDone] = useState(false);
@@ -30,15 +32,34 @@ export function AssessmentForm() {
   const section = SECTIONS[step];
   const isLast = step === SECTIONS.length - 1;
 
-  function set(id: string, value: string | string[] | number) {
-    setAnswers((prev) => ({ ...prev, [id]: value }));
+  const set: SetAnswer = (id, value) => {
+    setAnswers((prev) => {
+      const next = { ...prev, [id]: value };
+
+      // A conditional answer left behind after its trigger changes would be
+      // submitted for a question the user can no longer see.
+      for (const s of SECTIONS) {
+        for (const f of s.fields) {
+          if (
+            f.kind === "text" &&
+            f.showWhen?.field === id &&
+            value !== f.showWhen.equals
+          ) {
+            delete next[f.id];
+          }
+        }
+      }
+
+      return next;
+    });
+
     setErrors((prev) => {
       if (!prev[id]) return prev;
       const next = { ...prev };
       delete next[id];
       return next;
     });
-  }
+  };
 
   function scrollTop() {
     window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
@@ -65,10 +86,8 @@ export function AssessmentForm() {
         return;
       }
 
-      // Name and email live in section A, so send them back to fix it.
+      // Name and email live on this final section, so the errors show in place.
       setErrors(result.errors);
-      setStep(0);
-      scrollTop();
     });
   }
 
@@ -81,13 +100,12 @@ export function AssessmentForm() {
       <StepRail current={step} />
 
       <p className="mb-6 text-center text-[13.5px] font-bold text-azure">
-        Section {section.letter} — {section.title} · {step + 1} of{" "}
-        {SECTIONS.length}
+        {`Section ${section.badge} — ${section.title} · ${step + 1} of ${SECTIONS.length}`}
       </p>
 
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
-          key={section.letter}
+          key={section.badge}
           initial={{ opacity: 0, y: reduce ? 0 : 16 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: reduce ? 0 : -12 }}
@@ -95,7 +113,7 @@ export function AssessmentForm() {
         >
           <section className="rounded-3xl border border-cardline bg-white px-6 py-9 shadow-dervo-md sm:px-10">
             <p className="text-[12px] font-extrabold uppercase tracking-[0.14em] text-azure">
-              Section {section.letter}
+              Section {section.badge}
             </p>
             <h2 className="mt-2 text-[24px] font-extrabold tracking-[-0.01em] text-navy">
               {section.title}
@@ -105,13 +123,18 @@ export function AssessmentForm() {
             )}
 
             <div className="mt-6 flex flex-col gap-6">
-              <HalfRow fields={section.fields} answers={answers} errors={errors} set={set} />
+              <Fields
+                fields={section.fields}
+                answers={answers}
+                errors={errors}
+                set={set}
+              />
             </div>
 
             <div className="mt-7 flex flex-wrap items-center justify-between gap-4">
               {step === 0 ? (
                 <span className="text-[13px] text-muted">
-                  Takes about 5 minutes
+                  Takes about 3 minutes
                 </span>
               ) : (
                 <button
@@ -141,7 +164,7 @@ export function AssessmentForm() {
 }
 
 /** Renders fields in order, pairing consecutive `half` fields into one row. */
-function HalfRow({
+function Fields({
   fields,
   answers,
   errors,
@@ -150,13 +173,21 @@ function HalfRow({
   fields: Field[];
   answers: Answers;
   errors: Record<string, string>;
-  set: (id: string, value: string | string[] | number) => void;
+  set: SetAnswer;
 }) {
   const out: React.ReactNode[] = [];
 
   for (let i = 0; i < fields.length; i += 1) {
     const field = fields[i];
     const next = fields[i + 1];
+
+    if (
+      field.kind === "text" &&
+      field.showWhen &&
+      answers[field.showWhen.field] !== field.showWhen.equals
+    ) {
+      continue;
+    }
 
     if (
       field.kind === "text" &&
@@ -175,11 +206,23 @@ function HalfRow({
     }
 
     out.push(
-      <FieldView key={field.id} field={field} answers={answers} errors={errors} set={set} />,
+      <FieldView
+        key={field.id}
+        field={field}
+        answers={answers}
+        errors={errors}
+        set={set}
+      />,
     );
   }
 
   return <>{out}</>;
+}
+
+function OptionalTag() {
+  return (
+    <span className="ml-2 text-[13px] font-normal text-muted">optional</span>
+  );
 }
 
 function FieldView({
@@ -191,7 +234,7 @@ function FieldView({
   field: Field;
   answers: Answers;
   errors: Record<string, string>;
-  set: (id: string, value: string | string[] | number) => void;
+  set: SetAnswer;
 }) {
   const groupId = useId();
 
@@ -204,6 +247,7 @@ function FieldView({
           className="mb-2 block text-[14px] font-bold text-navy"
         >
           {field.label}
+          {field.optional && <OptionalTag />}
         </label>
         <input
           id={`${groupId}-${field.id}`}
@@ -217,7 +261,11 @@ function FieldView({
           className={`${INPUT} ${error ? "border-alert" : ""}`}
         />
         {error && (
-          <p id={`${groupId}-err`} role="alert" className="mt-1.5 text-[13px] text-alert">
+          <p
+            id={`${groupId}-err`}
+            role="alert"
+            className="mt-1.5 text-[13px] text-alert"
+          >
             {error}
           </p>
         )}
@@ -233,6 +281,7 @@ function FieldView({
           className="block text-[14px] font-bold text-navy"
         >
           {field.label}
+          {field.optional && <OptionalTag />}
         </label>
         {field.hint && (
           <p className="mt-1 mb-2 text-[13px] text-muted">{field.hint}</p>
@@ -243,9 +292,7 @@ function FieldView({
           maxLength={field.maxLength ?? 2000}
           placeholder={field.placeholder}
           onChange={(e) => set(field.id, e.target.value)}
-          className={`${TEXTAREA} ${field.hint ? "" : "mt-2"} ${
-            field.tall ? "min-h-[110px]" : "min-h-[100px]"
-          }`}
+          className={`${TEXTAREA} min-h-[110px] ${field.hint ? "" : "mt-2"}`}
         />
       </div>
     );
@@ -257,8 +304,13 @@ function FieldView({
       <fieldset>
         <legend className="mb-2.5 text-[14px] font-bold text-navy">
           {field.label}
+          {field.optional && <OptionalTag />}
         </legend>
-        <div role="radiogroup" aria-label={field.label} className="flex flex-wrap gap-2.5">
+        <div
+          role="radiogroup"
+          aria-label={field.label}
+          className="flex flex-wrap gap-2.5"
+        >
           {field.options.map((option) => {
             const on = value === option;
             return (
@@ -279,93 +331,48 @@ function FieldView({
     );
   }
 
-  if (field.kind === "multi") {
-    const value = (answers[field.id] as string[] | undefined) ?? [];
-    return (
-      <fieldset>
-        <legend className="text-[14px] font-bold text-navy">{field.label}</legend>
-        <p className="mt-1 mb-2.5 text-[13px] text-muted">Select all that apply</p>
-        <div className="flex flex-wrap gap-2.5">
-          {field.options.map((option) => {
-            const on = value.includes(option);
-            return (
-              <button
-                key={option}
-                type="button"
-                aria-pressed={on}
-                onClick={() =>
-                  set(
-                    field.id,
-                    on ? value.filter((v) => v !== option) : [...value, option],
-                  )
-                }
-                className={`${CHIP_BASE} ${on ? CHIP_ON : CHIP_OFF}`}
-              >
-                {option}
-              </button>
-            );
-          })}
-        </div>
-      </fieldset>
-    );
-  }
-
+  const value = (answers[field.id] as string[] | undefined) ?? [];
   return (
-    <div>
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[13.5px] text-muted">{field.prompt}</p>
-        <p className="text-[12.5px] text-muted">{field.legend}</p>
-      </div>
-      <div className="mt-3 flex flex-col gap-3.5">
-        {field.items.map((item) => {
-          const value = answers[item.id] as number | undefined;
+    <fieldset>
+      <legend className="text-[14px] font-bold text-navy">{field.label}</legend>
+      <p className="mt-1 mb-2.5 text-[13px] text-muted">Select all that apply</p>
+      <div className="flex flex-wrap gap-2.5">
+        {field.options.map((option) => {
+          const on = value.includes(option);
           return (
-            <div
-              key={item.id}
-              className="flex flex-wrap items-center justify-between gap-3"
+            <button
+              key={option}
+              type="button"
+              aria-pressed={on}
+              onClick={() =>
+                set(
+                  field.id,
+                  on ? value.filter((v) => v !== option) : [...value, option],
+                )
+              }
+              className={`${CHIP_BASE} ${on ? CHIP_ON : CHIP_OFF}`}
             >
-              <p className="text-[14px] font-semibold text-list">{item.label}</p>
-              <div
-                role="radiogroup"
-                aria-label={item.label}
-                className="flex gap-[7px]"
-              >
-                {RATING_SCALE.map((n) => {
-                  const on = value === n;
-                  return (
-                    <button
-                      key={n}
-                      type="button"
-                      role="radio"
-                      aria-checked={on}
-                      aria-label={`${n} out of 5`}
-                      onClick={() => set(item.id, n)}
-                      className={`size-9 rounded-full border-[1.5px] text-[13.5px] font-bold transition-colors duration-150 ${
-                        on ? CHIP_ON : CHIP_OFF
-                      }`}
-                    >
-                      {n}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+              {option}
+            </button>
           );
         })}
       </div>
-    </div>
+    </fieldset>
   );
 }
 
 function StepRail({ current }: { current: number }) {
   return (
-    <ol className="mb-2.5 flex items-center justify-center" aria-label="Progress">
+    <ol
+      className="mb-2.5 flex items-center justify-center"
+      aria-label="Progress"
+    >
       {SECTIONS.map((section, i) => {
         const state =
           i < current ? "done" : i === current ? "current" : "upcoming";
 
         return (
-          <li key={section.letter} className="flex items-center">
+          <li key={section.badge} className="flex items-center">
             {i > 0 && (
               <span
                 aria-hidden="true"
@@ -386,7 +393,7 @@ function StepRail({ current }: { current: number }) {
                 {state === "done" ? "Completed: " : ""}
                 {section.title}
               </span>
-              <span aria-hidden="true">{section.letter}</span>
+              <span aria-hidden="true">{section.badge}</span>
             </span>
           </li>
         );
@@ -413,7 +420,7 @@ function Confirmation() {
           <path d="M20 6 9 17l-5-5" />
         </svg>
       </div>
-      <h2 className="mt-6 text-[28px] font-extrabold tracking-[-0.01em] text-navy">
+      <h2 className="mt-5 text-[28px] font-extrabold tracking-[-0.01em] text-navy">
         Thanks! Your roadmap is on the way.
       </h2>
       <p className="mx-auto mt-3 max-w-[440px] text-[15px] leading-[1.65] text-ink">

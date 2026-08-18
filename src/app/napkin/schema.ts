@@ -170,7 +170,7 @@ export const ASSESSMENTS: Record<AssessmentSlug, AssessmentMeta> = {
     title: "Start My Assessment",
     intro:
       "Not sure if your idea is ready? That's okay. You don't need to have everything figured out. That's what Dervo is here for.",
-    summary: "7 sections · about 5 minutes",
+    summary: "20 questions · about 3 minutes",
   },
   scale: {
     slug: "scale",

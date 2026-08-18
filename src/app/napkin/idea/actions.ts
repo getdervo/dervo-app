@@ -2,7 +2,7 @@
 
 import { FIELD_SHAPES } from "./questions";
 
-export type Answers = Record<string, string | string[] | number>;
+export type Answers = Record<string, string | string[]>;
 
 export type SubmitResult =
   | { ok: true }
@@ -51,11 +51,6 @@ export async function submitIdeaAssessment(
         if (Array.isArray(value)) {
           const picked = value.filter((v) => shape.options.includes(v));
           if (picked.length) clean[id] = picked;
-        }
-        break;
-      case "rating":
-        if (typeof value === "number" && value >= 1 && value <= 5) {
-          clean[id] = Math.round(value);
         }
         break;
     }
