@@ -53,7 +53,7 @@ export function HowItWorks() {
           aria-hidden="true"
           className="absolute top-[26px] right-[9%] left-[9%] hidden border-t-2 border-dashed border-connector sm:block"
         />
-        <ol className="relative grid grid-cols-2 gap-[18px] sm:grid-cols-4">
+        <ol className="relative grid grid-cols-1 gap-8 sm:grid-cols-4 sm:gap-[18px]">
           {STEPS.map(({ Icon, title, body, dark }) => (
             <li
               key={title}
