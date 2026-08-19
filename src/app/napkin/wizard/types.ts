@@ -220,6 +220,46 @@ export function sanitize(
   return clean;
 }
 
+/**
+ * Every assessment ends with these two, so the result has somewhere to go.
+ * Shared rather than repeated so the ids, labels and validation stay in step.
+ */
+export const CONTACT_FIELDS: Field[] = [
+  {
+    kind: "text",
+    id: "name",
+    label: "Your name",
+    placeholder: "Your name",
+    half: true,
+    maxLength: 120,
+  },
+  {
+    kind: "text",
+    id: "email",
+    label: "Your email",
+    placeholder: "you@example.com",
+    inputType: "email",
+    half: true,
+    maxLength: 200,
+  },
+];
+
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Returns field-keyed errors; an empty object means the contact details pass. */
+export function validateContact(answers: Answers) {
+  const errors: Record<string, string> = {};
+
+  const name = typeof answers.name === "string" ? answers.name.trim() : "";
+  const email = typeof answers.email === "string" ? answers.email.trim() : "";
+
+  if (!name) errors.name = "We need a name for your roadmap.";
+  if (!email) errors.email = "We need an email to send your roadmap to.";
+  else if (!EMAIL.test(email)) errors.email = "That doesn't look like an email.";
+
+  return errors;
+}
+
 export function countQuestions(sections: Section[]) {
   return sections.reduce((total, section) => total + section.fields.length, 0);
 }

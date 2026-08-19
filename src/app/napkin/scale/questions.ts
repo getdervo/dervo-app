@@ -1,6 +1,7 @@
 import {
   buildFieldShapes,
   countQuestions,
+  CONTACT_FIELDS,
   type Section,
 } from "../wizard/types";
 import {
@@ -249,6 +250,7 @@ export const SECTIONS: Section[] = [
         placeholder: "Type your answer",
         optional: true,
       },
+      ...CONTACT_FIELDS,
     ],
   },
 ];

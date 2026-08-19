@@ -9,6 +9,7 @@
 import {
   buildFieldShapes,
   countQuestions,
+  CONTACT_FIELDS,
   type Section,
 } from "../wizard/types";
 
@@ -209,23 +210,7 @@ export const SECTIONS: Section[] = [
           "Create a 30/60/90-day roadmap",
         ],
       },
-      {
-        kind: "text",
-        id: "name",
-        label: "Your name",
-        placeholder: "Your name",
-        half: true,
-        maxLength: 120,
-      },
-      {
-        kind: "text",
-        id: "email",
-        label: "Your email",
-        placeholder: "you@example.com",
-        inputType: "email",
-        half: true,
-        maxLength: 200,
-      },
+      ...CONTACT_FIELDS,
     ],
   },
 ];

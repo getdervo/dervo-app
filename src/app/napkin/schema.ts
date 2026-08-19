@@ -28,7 +28,7 @@ export const ASSESSMENTS: Record<AssessmentSlug, AssessmentMeta> = {
     title: "Your Business Is Ready for Its Next Level",
     intro:
       "Growing a business isn't just about getting more customers. It's about building the right systems, improving what's already working, and knowing where to focus next.",
-    summary: "20 questions · about 4 minutes",
+    summary: "22 questions · about 4 minutes",
   },
   fix: {
     slug: "fix",
@@ -36,6 +36,6 @@ export const ASSESSMENTS: Record<AssessmentSlug, AssessmentMeta> = {
     title: "I'm Stuck. Help Me Figure Out Why.",
     intro:
       "Your business isn't where you want it to be, but you're not exactly sure what needs to change. Tell us what's happening and we'll help find the bottleneck.",
-    summary: "16 questions · about 3 minutes",
+    summary: "18 questions · about 3 minutes",
   },
 };

@@ -22,7 +22,7 @@ export default function ScaleAssessmentPage() {
       timeEstimate="Takes about 4 minutes"
       confirmation={{
         heading: "Thanks! Your roadmap is on the way.",
-        body: "Dervo is analyzing your answers. Your biggest opportunities and a step-by-step roadmap for growth are being put together now.",
+        body: "Dervo is analyzing your answers. Your biggest opportunities and a step-by-step roadmap for growth will land in your inbox shortly.",
       }}
     />
   );
