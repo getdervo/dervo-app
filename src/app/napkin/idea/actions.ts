@@ -1,5 +1,6 @@
 "use server";
 
+import { supabaseServer } from "@/lib/supabase";
 import { sanitize, validateContact, type Answers } from "../wizard/types";
 import type { SubmitResult } from "../wizard/wizard";
 import { FIELD_SHAPES } from "./questions";
@@ -19,13 +20,22 @@ export async function submitIdeaAssessment(
 
   const clean = sanitize(FIELD_SHAPES, answers);
 
-  // TODO: persist to Supabase and kick off the roadmap email once wired up.
-  console.log("[napkin:idea] submission", {
-    name: clean.name,
-    email: clean.email,
-    answered: Object.keys(clean).length,
-    answers: clean,
-  });
+  const { error } = await supabaseServer()
+    .from("assessments")
+    .insert({
+      assessment: "idea",
+      name: clean.name as string,
+      email: clean.email as string,
+      answers: clean,
+    });
+
+  if (error) {
+    console.error("[napkin:idea] insert failed", error);
+    return {
+      ok: false,
+      errors: { _form: "Something went wrong saving that. Please try again." },
+    };
+  }
 
   return { ok: true, email: clean.email as string | undefined };
 }

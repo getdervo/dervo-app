@@ -1,31 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { subscribe } from "./newsletter-actions";
 
 type Status = { kind: "idle" | "error" | "success"; message?: string };
 
 export function NewsletterForm() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
+  const [pending, startTransition] = useTransition();
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const value = email.trim();
+    startTransition(async () => {
+      const result = await subscribe(email);
 
-    if (!value) {
-      setStatus({ kind: "error", message: "Enter your email to subscribe." });
-      return;
-    }
+      setStatus({
+        kind: result.ok ? "success" : "error",
+        message: result.message,
+      });
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      setStatus({ kind: "error", message: "That doesn't look like an email." });
-      return;
-    }
-
-    // TODO: wire to the mailing list once a provider is chosen.
-    setStatus({ kind: "success", message: "You're on the list." });
-    setEmail("");
+      if (result.ok) setEmail("");
+    });
   }
 
   return (
@@ -50,9 +47,10 @@ export function NewsletterForm() {
         />
         <button
           type="submit"
-          className="rounded-full bg-lime px-[22px] py-[11px] text-[13px] font-bold text-navy transition-colors duration-150 hover:bg-lime-dark"
+          disabled={pending}
+          className="rounded-full bg-lime px-[22px] py-[11px] text-[13px] font-bold text-navy transition-colors duration-150 hover:bg-lime-dark disabled:opacity-60"
         >
-          Subscribe
+          {pending ? "…" : "Subscribe"}
         </button>
       </div>
 
