@@ -58,14 +58,24 @@ export function Wizard({
     setAnswers((prev) => {
       const next = { ...prev, [id]: value };
 
-      // A conditional answer left behind after its trigger changes would be
-      // submitted for a question the user can no longer see.
+      // Answers left behind after their question disappears or their chosen
+      // option is withdrawn would be submitted for something no longer shown.
       for (const s of sections) {
         for (const f of s.fields) {
           if (
             f.kind === "text" &&
             f.showWhen?.field === id &&
             value !== f.showWhen.equals
+          ) {
+            delete next[f.id];
+          }
+
+          if (
+            f.kind === "single-from" &&
+            f.source === id &&
+            Array.isArray(value) &&
+            typeof next[f.id] === "string" &&
+            !value.includes(next[f.id] as string)
           ) {
             delete next[f.id];
           }
@@ -398,6 +408,35 @@ function FieldView({
           </div>
         </fieldset>
       );
+
+    case "single-from": {
+      const picked = (answers[field.source] as string[] | undefined) ?? [];
+      const value = answers[field.id] as string | undefined;
+
+      return (
+        <fieldset>
+          <legend className={LABEL}>
+            {field.label}
+            {field.optional && <Optional />}
+          </legend>
+          {field.hint && <p className={HINT}>{field.hint}</p>}
+          {picked.length === 0 ? (
+            <p className="mt-2 text-[13.5px] text-muted">
+              Pick some above and they&apos;ll show up here.
+            </p>
+          ) : (
+            <div className="mt-2.5">
+              <ChipRow
+                options={picked}
+                value={value}
+                label={field.label}
+                onPick={(option) => set(field.id, option)}
+              />
+            </div>
+          )}
+        </fieldset>
+      );
+    }
 
     case "single-rows":
       return (

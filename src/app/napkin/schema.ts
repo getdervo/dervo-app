@@ -1,13 +1,3 @@
-export type Question = {
-  id: string;
-  label: string;
-  hint: string;
-  placeholder: string;
-  required?: boolean;
-  rows?: number;
-  maxLength: number;
-};
-
 export const ASSESSMENT_SLUGS = ["idea", "scale", "fix"] as const;
 
 export type AssessmentSlug = (typeof ASSESSMENT_SLUGS)[number];
@@ -21,76 +11,6 @@ export type AssessmentMeta = {
   /** Shown on the chooser, e.g. "8 questions · about 5 minutes". */
   summary: string;
 };
-
-const FIX_QUESTIONS: Question[] = [
-  {
-    id: "business",
-    label: "What does the business do, in one sentence?",
-    hint: "Start with the basics so the rest has something to hang on.",
-    placeholder: "We do mobile car detailing for…",
-    required: true,
-    rows: 2,
-    maxLength: 280,
-  },
-  {
-    id: "whats_happening",
-    label: "What's actually happening?",
-    hint: "Describe what you're seeing, not what you think is causing it.",
-    placeholder: "Bookings dropped by half and…",
-    required: true,
-    rows: 4,
-    maxLength: 1000,
-  },
-  {
-    id: "when",
-    label: "When did it start going sideways?",
-    hint: "Roughly when, and what else changed around that time.",
-    placeholder: "Around March, right after we…",
-    required: true,
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "tried",
-    label: "What have you already tried?",
-    hint: "Including the things that didn't work — those rule out whole branches.",
-    placeholder: "We dropped prices, ran ads…",
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "numbers",
-    label: "What do the numbers say?",
-    hint: "Where money comes in, where it goes out, and what's changed in between.",
-    placeholder: "Revenue is flat but costs…",
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "signal",
-    label: "Who's telling you something is wrong?",
-    hint: "Customers, staff, your accountant, or a feeling at 3am — the source matters.",
-    placeholder: "Two regulars mentioned…",
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "avoiding",
-    label: "What are you avoiding looking at?",
-    hint: "There's usually one number or conversation you keep putting off. Name it.",
-    placeholder: "I haven't reconciled…",
-    rows: 3,
-    maxLength: 1000,
-  },
-  {
-    id: "stakes",
-    label: "If nothing changes in six months, what happens?",
-    hint: "Being specific about the downside makes the tradeoffs obvious.",
-    placeholder: "We'd have to let go of…",
-    rows: 3,
-    maxLength: 1000,
-  },
-];
 
 /** Chooser metadata for every assessment, including the wizard-driven idea one. */
 export const ASSESSMENTS: Record<AssessmentSlug, AssessmentMeta> = {
@@ -113,67 +33,9 @@ export const ASSESSMENTS: Record<AssessmentSlug, AssessmentMeta> = {
   fix: {
     slug: "fix",
     name: "I'm Stuck. Help Me Figure Out Why.",
-    title: "The Sticking Point",
+    title: "I'm Stuck. Help Me Figure Out Why.",
     intro:
-      "Something's off and it's hard to name from the inside. Eight questions to get it out where you can see it, and narrow down what's really in the way.",
-    summary: "8 questions · about 5 minutes",
+      "Your business isn't where you want it to be, but you're not exactly sure what needs to change. Tell us what's happening and we'll help find the bottleneck.",
+    summary: "16 questions · about 3 minutes",
   },
 };
-
-/** The two assessments still served by the simple single-scroll form. */
-export const FORM_SLUGS = ["fix"] as const;
-
-export type FormSlug = (typeof FORM_SLUGS)[number];
-
-export type FormAssessment = AssessmentMeta & {
-  cta: string;
-  questions: Question[];
-};
-
-export const FORM_ASSESSMENTS: Record<FormSlug, FormAssessment> = {
-  fix: {
-    ...ASSESSMENTS.fix,
-    cta: "Done — help me see it",
-    questions: FIX_QUESTIONS,
-  },
-};
-
-export function isFormSlug(value: string): value is FormSlug {
-  return (FORM_SLUGS as readonly string[]).includes(value);
-}
-
-export function isAssessmentSlug(value: string): value is AssessmentSlug {
-  return (ASSESSMENT_SLUGS as readonly string[]).includes(value);
-}
-
-export type NapkinState = {
-  status: "idle" | "error" | "success";
-  errors: Record<string, string>;
-  answers: Record<string, string>;
-};
-
-export const initialNapkinState: NapkinState = {
-  status: "idle",
-  errors: {},
-  answers: {},
-};
-
-/** Shared by the Server Action; kept out of the "use server" file so it can export non-functions. */
-export function validate(
-  questions: Question[],
-  answers: Record<string, string>,
-) {
-  const errors: Record<string, string> = {};
-
-  for (const question of questions) {
-    const answer = answers[question.id] ?? "";
-
-    if (question.required && answer.length === 0) {
-      errors[question.id] = "This one's worth answering.";
-    } else if (answer.length > question.maxLength) {
-      errors[question.id] = `Keep it under ${question.maxLength} characters.`;
-    }
-  }
-
-  return errors;
-}

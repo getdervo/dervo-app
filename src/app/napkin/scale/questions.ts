@@ -3,6 +3,14 @@ import {
   countQuestions,
   type Section,
 } from "../wizard/types";
+import {
+  CUSTOMER_SOURCES,
+  REVENUE_RANGES,
+  REVENUE_WITH_UNSURE,
+  STEP_AWAY,
+  TIME_SINKS,
+  GOALS,
+} from "../wizard/options";
 
 /**
  * The scale assessment: five sections, twenty questions.
@@ -12,16 +20,6 @@ import {
  * outcomes and fix-one-thing list had no existing counterpart in this codebase
  * and are authored here — adjust freely.
  */
-
-const REVENUE_RANGES = [
-  "Under $500",
-  "$500–2k",
-  "$2k–5k",
-  "$5k–10k",
-  "$10k+",
-];
-
-const REVENUE_WITH_UNSURE = [...REVENUE_RANGES, "I'm not sure"];
 
 const INDUSTRIES = [
   "Home & trade services",
@@ -136,20 +134,7 @@ export const SECTIONS: Section[] = [
         label: "Where do customers actually come from?",
         hint: "Select all that apply, then tap one again to mark it your #1 source",
         primary: true,
-        options: [
-          "Word of mouth",
-          "Repeat customers",
-          "Instagram",
-          "TikTok",
-          "Facebook",
-          "Google search",
-          "Google/Meta ads",
-          "LinkedIn",
-          "Local directories",
-          "Walk-ins",
-          "Partnerships",
-          "Not sure",
-        ],
+        options: CUSTOMER_SOURCES,
       },
       {
         kind: "single",
@@ -230,29 +215,13 @@ export const SECTIONS: Section[] = [
         id: "time_sinks",
         label: "What eats the most of your week?",
         max: 3,
-        options: [
-          "Doing the actual work",
-          "Chasing new business",
-          "Quoting and proposals",
-          "Customer support",
-          "Scheduling and logistics",
-          "Invoicing and chasing payment",
-          "Bookkeeping and admin",
-          "Marketing and content",
-          "Managing the team",
-          "Hiring and training",
-        ],
+        options: TIME_SINKS,
       },
       {
         kind: "single",
         id: "step_away",
         label: "If you stepped away for two weeks, what would happen?",
-        options: [
-          "Everything would keep running",
-          "Most things would run, a few would slip",
-          "It would limp along and I'd have a mess to fix",
-          "It would grind to a halt",
-        ],
+        options: STEP_AWAY,
       },
     ],
   },
@@ -264,16 +233,7 @@ export const SECTIONS: Section[] = [
         kind: "single",
         id: "fix_first",
         label: "If Dervo could fix one thing right now, what would it be?",
-        options: [
-          "Bring in more customers",
-          "Charge more for what I do",
-          "Get off the tools",
-          "Make the work repeatable",
-          "Sort out cash flow",
-          "Hire and keep good people",
-          "Know which numbers matter",
-          "Find time to work on the business",
-        ],
+        options: GOALS,
       },
       {
         kind: "textarea",

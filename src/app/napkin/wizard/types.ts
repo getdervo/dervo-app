@@ -73,6 +73,15 @@ export type Field =
       rows: { id: string; label?: string; options: string[] }[];
       optional?: boolean;
     }
+  /** Single-select whose choices are whatever the user picked in `source`. */
+  | {
+      kind: "single-from";
+      id: string;
+      label: string;
+      hint?: string;
+      source: string;
+      optional?: boolean;
+    }
   | {
       kind: "multi";
       id: string;
@@ -111,6 +120,15 @@ export const PRIMARY_SUFFIX = "_primary";
 export function buildFieldShapes(sections: Section[]) {
   const shapes: Record<string, FieldShape> = {};
 
+  const sourceOptions = (id: string) => {
+    for (const section of sections) {
+      for (const field of section.fields) {
+        if (field.id === id && field.kind === "multi") return field.options;
+      }
+    }
+    return [];
+  };
+
   const str = (id: string, maxLength = 2000) => {
     shapes[id] = { type: "string", maxLength };
   };
@@ -136,6 +154,11 @@ export function buildFieldShapes(sections: Section[]) {
           break;
         case "single":
           shapes[field.id] = { type: "option", options: field.options };
+          break;
+        case "single-from":
+          // Choices are a runtime subset of the source field, so validation
+          // accepts anything from that field's full option list.
+          shapes[field.id] = { type: "option", options: sourceOptions(field.source) };
           break;
         case "single-rows":
           for (const row of field.rows) {
