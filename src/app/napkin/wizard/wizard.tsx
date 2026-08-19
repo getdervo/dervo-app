@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowRightIcon } from "@/components/landing/icons";
 import {
   PRIMARY_SUFFIX,
+  validateContact,
   type Answers,
   type Field,
   type Section,
@@ -28,7 +29,7 @@ const LABEL = "text-[14px] font-bold text-navy";
 const HINT = "mt-1 text-[13px] text-muted";
 
 export type SubmitResult =
-  | { ok: true }
+  | { ok: true; email?: string }
   | { ok: false; errors: Record<string, string> };
 
 type SetAnswer = (id: string, value: string | string[]) => void;
@@ -45,7 +46,7 @@ export function Wizard({
   confirmation: { heading: string; body: string };
 }) {
   const [step, setStep] = useState(0);
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useState<{ email?: string } | null>(null);
   const [answers, setAnswers] = useState<Answers>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pending, startTransition] = useTransition();
@@ -109,11 +110,20 @@ export function Wizard({
       return;
     }
 
+    // Caught here so an empty field flags instantly; the action re-checks
+    // independently, since anything client-side can be bypassed.
+    const contactErrors = validateContact(answers);
+
+    if (Object.keys(contactErrors).length > 0) {
+      setErrors(contactErrors);
+      return;
+    }
+
     startTransition(async () => {
       const result = await submitAction(answers);
 
       if (result.ok) {
-        setDone(true);
+        setDone({ email: result.email });
         scrollTop();
         return;
       }
@@ -123,7 +133,7 @@ export function Wizard({
   }
 
   if (done) {
-    return <Confirmation {...confirmation} />;
+    return <Confirmation {...confirmation} email={done.email} />;
   }
 
   return (
@@ -253,6 +263,14 @@ function Optional() {
   );
 }
 
+function Required() {
+  return (
+    <span className="ml-1 text-alert" aria-hidden="true">
+      *
+    </span>
+  );
+}
+
 function FieldView({
   field,
   answers,
@@ -273,6 +291,7 @@ function FieldView({
         <div>
           <label htmlFor={`${uid}-${field.id}`} className={`mb-2 block ${LABEL}`}>
             {field.label}
+            {field.required && <Required />}
             {field.optional && <Optional />}
           </label>
           <input
@@ -281,6 +300,8 @@ function FieldView({
             value={(answers[field.id] as string) ?? ""}
             maxLength={field.maxLength}
             placeholder={field.placeholder}
+            required={field.required}
+            aria-required={field.required || undefined}
             onChange={(e) => set(field.id, e.target.value)}
             aria-invalid={error ? true : undefined}
             aria-describedby={error ? `${uid}-err` : undefined}
@@ -609,7 +630,15 @@ function StepRail({
   );
 }
 
-function Confirmation({ heading, body }: { heading: string; body: string }) {
+function Confirmation({
+  heading,
+  body,
+  email,
+}: {
+  heading: string;
+  body: string;
+  email?: string;
+}) {
   return (
     <section className="rounded-3xl border border-cardline bg-white px-6 py-12 text-center shadow-dervo-md sm:px-10">
       <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-lime">
@@ -633,6 +662,24 @@ function Confirmation({ heading, body }: { heading: string; body: string }) {
       <p className="mx-auto mt-3 max-w-[440px] text-[15px] leading-[1.65] text-ink">
         {body}
       </p>
+
+      <div className="mx-auto mt-6 max-w-[440px] rounded-2xl bg-frost px-5 py-4">
+        <p className="text-[14px] leading-[1.6] text-navy">
+          We&apos;ll follow up by email
+          {email ? (
+            <>
+              {" at "}
+              <span className="font-bold break-all">{email}</span>
+            </>
+          ) : null}
+          .
+        </p>
+        <p className="mt-1 text-[13px] leading-[1.55] text-muted">
+          Nothing else to do for now — keep an eye on your inbox, and your spam
+          folder just in case.
+        </p>
+      </div>
+
       <Link
         href="/"
         className="mt-6.5 inline-block rounded-full border-[1.5px] border-outline bg-white px-[26px] py-3 text-[14px] font-bold text-azure transition-colors duration-150 hover:border-royal hover:text-navy"

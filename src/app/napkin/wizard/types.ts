@@ -24,6 +24,7 @@ export type Field =
       /** Pairs with the next `half` text field into a two-up row. */
       half?: boolean;
       optional?: boolean;
+      required?: boolean;
       maxLength?: number;
       /** Only rendered while another field holds this value. */
       showWhen?: { field: string; equals: string };
@@ -231,6 +232,7 @@ export const CONTACT_FIELDS: Field[] = [
     label: "Your name",
     placeholder: "Your name",
     half: true,
+    required: true,
     maxLength: 120,
   },
   {
@@ -240,6 +242,7 @@ export const CONTACT_FIELDS: Field[] = [
     placeholder: "you@example.com",
     inputType: "email",
     half: true,
+    required: true,
     maxLength: 200,
   },
 ];

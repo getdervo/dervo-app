@@ -22,7 +22,7 @@ export default function FixAssessmentPage() {
       timeEstimate="Takes about 3 minutes"
       confirmation={{
         heading: "Thanks! We're working it out.",
-        body: "Dervo is analyzing your answers to pinpoint your biggest bottleneck. Your diagnosis and next steps will land in your inbox shortly.",
+        body: "Dervo is analyzing your answers to pinpoint your biggest bottleneck and the next steps that will actually move it.",
       }}
     />
   );

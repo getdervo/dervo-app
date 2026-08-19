@@ -22,7 +22,7 @@ export default function IdeaAssessmentPage() {
       timeEstimate="Takes about 3 minutes"
       confirmation={{
         heading: "Thanks! Your roadmap is on the way.",
-        body: "Dervo is analyzing your answers. Your business health score and step-by-step roadmap will land in your inbox shortly.",
+        body: "Dervo is analyzing your answers and putting together your business health score and a step-by-step roadmap.",
       }}
     />
   );

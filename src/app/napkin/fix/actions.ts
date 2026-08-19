@@ -27,5 +27,5 @@ export async function submitFixAssessment(
     answers: clean,
   });
 
-  return { ok: true };
+  return { ok: true, email: clean.email as string | undefined };
 }
