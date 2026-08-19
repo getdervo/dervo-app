@@ -100,7 +100,6 @@ export const SECTIONS: Section[] = [
         label: "And roughly what was it a year ago?",
         hint: "Skip if you've been running under a year",
         options: REVENUE_WITH_UNSURE,
-        optional: true,
       },
       {
         kind: "single",
@@ -248,7 +247,6 @@ export const SECTIONS: Section[] = [
         id: "anything_else",
         label: "Anything else Dervo should know?",
         placeholder: "Type your answer",
-        optional: true,
       },
       ...CONTACT_FIELDS,
     ],

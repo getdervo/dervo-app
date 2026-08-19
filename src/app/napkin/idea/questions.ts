@@ -55,7 +55,6 @@ export const SECTIONS: Section[] = [
         id: "differentiator",
         label: "What would make yours different?",
         placeholder: "Type your answer",
-        optional: true,
       },
     ],
   },

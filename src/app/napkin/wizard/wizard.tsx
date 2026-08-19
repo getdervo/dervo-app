@@ -257,12 +257,6 @@ function Fields({
   return <>{out}</>;
 }
 
-function Optional() {
-  return (
-    <span className="ml-2 text-[13px] font-normal text-muted">optional</span>
-  );
-}
-
 function Required() {
   return (
     <span className="ml-1 text-alert" aria-hidden="true">
@@ -292,7 +286,6 @@ function FieldView({
           <label htmlFor={`${uid}-${field.id}`} className={`mb-2 block ${LABEL}`}>
             {field.label}
             {field.required && <Required />}
-            {field.optional && <Optional />}
           </label>
           <input
             id={`${uid}-${field.id}`}
@@ -321,7 +314,6 @@ function FieldView({
         <div>
           <label htmlFor={`${uid}-${field.id}`} className={`block ${LABEL}`}>
             {field.label}
-            {field.optional && <Optional />}
           </label>
           {field.hint && <p className={`${HINT} mb-2`}>{field.hint}</p>}
           <textarea
@@ -340,7 +332,6 @@ function FieldView({
         <div>
           <label htmlFor={`${uid}-${field.id}`} className={`mb-2 block ${LABEL}`}>
             {field.label}
-            {field.optional && <Optional />}
           </label>
           {field.hint && <p className={`${HINT} mb-2`}>{field.hint}</p>}
           <select
@@ -364,7 +355,6 @@ function FieldView({
         <div>
           <p className={LABEL}>
             {field.label}
-            {field.optional && <Optional />}
           </p>
           {field.hint && <p className={HINT}>{field.hint}</p>}
           <div
@@ -416,7 +406,6 @@ function FieldView({
         <fieldset>
           <legend className={LABEL}>
             {field.label}
-            {field.optional && <Optional />}
           </legend>
           {field.hint && <p className={HINT}>{field.hint}</p>}
           <div className="mt-2.5">
@@ -438,7 +427,6 @@ function FieldView({
         <fieldset>
           <legend className={LABEL}>
             {field.label}
-            {field.optional && <Optional />}
           </legend>
           {field.hint && <p className={HINT}>{field.hint}</p>}
           {picked.length === 0 ? (
@@ -464,7 +452,6 @@ function FieldView({
         <fieldset>
           <legend className={LABEL}>
             {field.label}
-            {field.optional && <Optional />}
           </legend>
           {field.hint && <p className={HINT}>{field.hint}</p>}
           <div className="mt-2.5 flex flex-col gap-3">
@@ -515,7 +502,6 @@ function FieldView({
         <fieldset>
           <legend className={LABEL}>
             {field.label}
-            {field.optional && <Optional />}
           </legend>
           <p className={`${HINT} mb-2.5`}>
             {field.hint ??

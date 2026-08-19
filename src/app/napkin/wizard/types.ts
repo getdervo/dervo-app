@@ -23,7 +23,6 @@ export type Field =
       inputType?: "text" | "email";
       /** Pairs with the next `half` text field into a two-up row. */
       half?: boolean;
-      optional?: boolean;
       required?: boolean;
       maxLength?: number;
       /** Only rendered while another field holds this value. */
@@ -35,7 +34,6 @@ export type Field =
       label: string;
       hint?: string;
       placeholder: string;
-      optional?: boolean;
       maxLength?: number;
     }
   | {
@@ -45,7 +43,6 @@ export type Field =
       hint?: string;
       placeholder: string;
       options: string[];
-      optional?: boolean;
     }
   /** Several short inputs on one row, optionally with a follow-up question. */
   | {
@@ -55,7 +52,6 @@ export type Field =
       hint?: string;
       inputs: ShortInput[];
       follow?: FollowUp;
-      optional?: boolean;
     }
   | {
       kind: "single";
@@ -63,7 +59,6 @@ export type Field =
       label: string;
       hint?: string;
       options: string[];
-      optional?: boolean;
     }
   /** One question answered by two or more stacked single-select rows. */
   | {
@@ -72,7 +67,6 @@ export type Field =
       label: string;
       hint?: string;
       rows: { id: string; label?: string; options: string[] }[];
-      optional?: boolean;
     }
   /** Single-select whose choices are whatever the user picked in `source`. */
   | {
@@ -81,7 +75,6 @@ export type Field =
       label: string;
       hint?: string;
       source: string;
-      optional?: boolean;
     }
   | {
       kind: "multi";
@@ -93,7 +86,6 @@ export type Field =
       max?: number;
       /** Tapping a chosen chip again marks it the primary answer. */
       primary?: boolean;
-      optional?: boolean;
     };
 
 export type Section = {
