@@ -24,7 +24,7 @@ export function Hero() {
 
         <Reveal className="mt-7.5" delay={0.24}>
           <Link
-            href="/napkin"
+            href="#solutions"
             className="inline-block rounded-full bg-royal px-7 py-[15px] text-[15px] font-bold text-frost shadow-dervo-md transition-[background-color,transform] duration-150 hover:bg-royal-dark hover:-translate-y-0.5"
           >
             Start your assessment

@@ -40,7 +40,7 @@ export function SiteHeader() {
       </nav>
 
       <Link
-        href="/napkin"
+        href="#solutions"
         className="rounded-full bg-royal px-6 py-3 text-[14px] font-bold text-frost shadow-dervo-sm transition-colors duration-150 hover:bg-royal-dark"
       >
         Get started
